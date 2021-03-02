@@ -1,13 +1,15 @@
 Debug/  
 Release/  
 obj/  
-.vs/
+.vs/  
+
 *.mdb  
 *.ldb  
 *.sln  
 *.config
-*.sdf 
+  *.sdf  
 *.suo  
-*.db
+*.db  
 *.ipch
 
+  *.sdf  *.vcxproj  *.filters
