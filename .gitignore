@@ -12,4 +12,6 @@ obj/
 *.db  
 *.ipch
 
-  *.sdf  *.vcxproj  *.filters
+*.sdf
+*.filters
+*.vcxproj
