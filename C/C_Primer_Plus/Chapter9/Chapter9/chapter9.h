@@ -55,3 +55,5 @@ double average_2d(double a[][5], int n);//p10_13子函数，用于计算二维数组总均值
 double max_2d(double a[][5], int n);//p10+13子函数，用于找二维数组最大值
 void p10_13(void);
 
+//s_gets()调用函数：读取整行输入字符串，并用空字符代替换行符，或者读取一部分输入，丢弃其余部分，
+char* s_gets(char* st, int n);
