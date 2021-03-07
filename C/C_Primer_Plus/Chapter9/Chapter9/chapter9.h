@@ -57,3 +57,9 @@ void p10_13(void);
 
 //s_gets()调用函数：读取整行输入字符串，并用空字符代替换行符，或者读取一部分输入，丢弃其余部分，
 char* s_gets(char* st, int n);
+
+void get_ch(char* ch, int n);//p11_1子函数，读取字符串
+void p11_1(void);
+
+void get_word(char* ch);//p11_3子函数，读取字符串中第一个单词
+void p11_3(void);

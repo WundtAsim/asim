@@ -491,3 +491,53 @@ char* s_gets(char* st, int n)
 	return ret_val;
 
 }
+void get_ch(char* ch, int n)
+{
+	for (int i = 0; i < n - 1; i++)
+	{		
+		ch[i] = getchar();
+		if (isspace(ch[i]))
+		{
+			ch[i + 1] = '\0';
+			break;
+		}
+			
+	}
+	ch[n-1] = '\0';
+	
+}
+void p11_1(void)
+{
+#define Len 10
+	printf("enter your words with %d characters:\n",Len-1);
+	char input[10];
+	get_ch(input, Len);
+	printf("Result is:\n");
+	puts(input);
+	
+}
+
+void get_word(char* ch)
+{
+	char temp = getchar();
+	while (isspace(temp))
+	{
+		temp = getchar();
+	}
+	int i = 0;
+	ch[i] = temp;
+	while (!(isspace(ch[i])))
+	{
+		i++;
+		ch[i] = getchar();
+	} 
+	ch[++i] = '\0'; 
+}
+void p11_3(void)
+{
+	printf("enter your words :\n");
+	char input[80];
+	get_word(input);
+	printf("Result is:\n");
+	puts(input);
+}
