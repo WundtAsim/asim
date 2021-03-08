@@ -541,3 +541,35 @@ void p11_3(void)
 	printf("Result is:\n");
 	puts(input);
 }
+
+
+void get_words(char* ch, int a)
+{
+	
+	char temp = getchar();
+	while (isspace(temp))
+	{
+		temp = getchar();
+		continue;
+	}
+	ch[0] = temp;
+
+	temp = getchar();
+	int i = 1;//×Ö·û¸öÊý
+	while ( (!(isspace(temp))) && (i<a-1) )
+	{
+		ch[i] = temp;
+		i++;
+		temp = getchar();		
+	}
+	ch[i] = '\0';
+
+}
+void p11_4(void)
+{
+	printf("enter your words :\n");
+	char input[50];
+	get_words(input,12);
+	printf("Result is:\n");
+	puts(input);
+}

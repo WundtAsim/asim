@@ -63,3 +63,6 @@ void p11_1(void);
 
 void get_word(char* ch);//p11_3子函数，读取字符串中第一个单词
 void p11_3(void);
+
+void get_words(char* ch, int a);//p11_4子函数，增加最大读取的字符数
+void p11_4(void);
