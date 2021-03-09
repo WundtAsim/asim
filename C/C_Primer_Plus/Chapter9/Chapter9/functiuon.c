@@ -543,9 +543,10 @@ void p11_3(void)
 }
 
 
-void get_words(char* ch, int a)
+char* get_words(char* ch, int a)
 {
 	
+	/*自己写的，下面使用参考的写法
 	char temp = getchar();
 	while (isspace(temp))
 	{
@@ -563,13 +564,89 @@ void get_words(char* ch, int a)
 		temp = getchar();		
 	}
 	ch[i] = '\0';
+	return;*/
+
+	int temp;
+	int n = 0;
+	char* pt = ch;
+
+	while ((temp = getchar()) != EOF && isspace(temp) )
+		continue;
+	//↑跳过第一个非空白字符前的所有字符
+	if (temp == EOF)
+	{
+		return NULL;
+		//若第一次直接输入Ctrl＋Z，返回空指针
+	}
+	else
+	{
+		*ch++ = temp;
+		n++;
+		//↑吧第一个非空白字符赋值给ch所指向的内存空间，并指向下一个存储空间
+	}
+
+	while ((temp = getchar()) != EOF && !isspace(temp) && n < a-1)
+	{
+		*ch++ = temp;
+		//↑从第二个字符开始赋值知道遇见但此后第一个空白
+		n++;
+	}
+	*ch = '\0';
+
+	if (temp == EOF)
+	{
+		return NULL;
+	}
+	else
+	{
+		while (getchar() != '\n')
+			continue;
+		//↑从单词后面丢弃输入行中其他字符
+		return pt;
+	}
 
 }
 void p11_4(void)
 {
 	printf("enter your words :\n");
 	char input[50];
-	get_words(input,12);
-	printf("Result is:\n");
-	puts(input);
+	while (get_words(input, 22) != NULL)
+	{
+		//get_words(input,12);
+		printf("Result is:\n");
+		puts(input);
+		printf("enter your words :\n");
+	}
+	
+}
+
+
+char* str_word(const char* ch, char one)
+{
+	//p11_5子函数，用于查找指定字符串中指定字符。
+	int len = strlen(ch);
+	for (int i = 0; i < len; i++)
+	{
+		if (ch[i] == one)
+		{
+			return ch + i;
+		}
+		if (ch[i] == '\0')
+			return NULL;
+	}
+}
+
+void p11_5(void)
+{
+	char ch[3][30] = {
+		"im groot.",
+		"im not groot.",
+		"damn."
+	};
+
+	for (int i = 0; i < 3; i++)
+	{
+		printf("the sentence %d:\n\"n\" first came out at %p\n", i, str_word(ch[i], 'n'));
+		printf("the function result is %p\n\n", strchr(ch[i], 'n'));
+	}
 }
