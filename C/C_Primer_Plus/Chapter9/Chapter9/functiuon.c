@@ -650,3 +650,83 @@ void p11_5(void)
 		printf("the function result is %p\n\n", strchr(ch[i], 'n'));
 	}
 }
+
+
+int is_within(int ch, const char* str)
+{
+	//p11_6子函数用于检测字符是否在字符串中
+	if (strchr(str, ch) != NULL)
+		return 1;
+	else
+		return 0;
+	
+}
+void p11_6()
+{
+	printf("plz enter a string: (EOF to quit)\n");
+	char str[20];
+	int ch;
+	while (s_gets(str, 20))
+	{
+
+		printf("plz enter a character: (EOF to quit)\n");
+		ch = getchar();
+		while (getchar() != '\n')
+			continue;
+
+		if (ch == EOF)
+			break;
+
+		if (is_within(ch , str))
+		{
+			printf("\"%c\"is within the string \"%s\"\n", ch, str);
+		}
+		else
+			printf("\"%c\"is not within the string \"%s\"\n", ch, str);
+		printf("\n\n"
+			"You can enter another string to check:\n");
+	}
+	printf("Done!\n");
+
+}
+
+char* mystrncpy(char* s1, char* s2, int n)
+{
+	//p11_7子函数，用于模仿strncpy函数复制s2的第n个字符到s1中
+	char* temp;
+	temp = s1;
+	for (int i = 0; i < n && s2[i]!='\0' ; i++)
+	{
+		*s1++ = s2[i];
+	}
+	*s1 = '\0';
+
+	return temp;
+}
+void p11_7()
+{
+	printf("Plz enter string s1:(EOF to quit)\n");
+	char s1[20];
+	char s2[20];
+	int n;
+	while (s_gets(s1, 20))
+	{
+		printf("Then enter string s2:\n");
+		if (s_gets(s2, 20) != NULL)
+		{
+			printf("Next, enter the number of characters you want to copy to s1 in the stirng s2:\n");
+			while (scanf_s("%d", &n) != 1 || n <= 0)
+				while (getchar() != '\n')
+					continue;
+
+			mystrncpy(s1, s2, n);
+			while (getchar() != '\n')
+				continue;
+			printf("So the string s1 has been changed to \"%s\"\n\n", s1);
+			printf("You can enter s1 again:\n");
+		
+		}
+		
+	}
+	printf("Done!\n\n");
+}

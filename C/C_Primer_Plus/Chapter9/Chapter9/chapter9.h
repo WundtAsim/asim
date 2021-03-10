@@ -69,3 +69,10 @@ void p11_4(void);
 
 char* str_word(const char* ch, char one);//p11_5子函数，用于查找指定字符串中指定字符。
 void p11_5(void);
+
+int is_within(int ch, const char* str);//p11_6子函数用于检测字符是否在字符串中
+void p11_6();
+
+
+char* mystrncpy(char* s1, char* s2, int n);
+void p11_7();
