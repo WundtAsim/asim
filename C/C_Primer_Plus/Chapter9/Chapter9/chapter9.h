@@ -76,3 +76,11 @@ void p11_6();
 
 char* mystrncpy(char* s1, char* s2, int n);
 void p11_7();
+
+void eatline(void);
+int get_choice(void);
+void print_str(char* str, int n);
+void ascii_print_str(char* str, int n);
+void len_print_str(char* str, int n);
+void first_print_str(char* str, int n);
+void p11_11();

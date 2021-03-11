@@ -730,3 +730,128 @@ void p11_7()
 	}
 	printf("Done!\n\n");
 }
+
+
+void eatline(void)
+{
+	//清空输出行
+	while (getchar() != '\n')
+		continue;
+}
+int get_choice(void)
+{
+	//获取列表选项
+	int ch;
+	do
+	{
+		ch = tolower(getchar());
+	} while (isspace(ch));
+	eatline();
+	printf("i entered %c\n", ch);
+	return ch;
+	
+}
+void print_str(char* str, int n)
+{
+	//直接打印字符串
+	printf("Source string:\n");
+	for (int i = 0; i < n; i++)
+	{
+		puts(str[i]);
+	}
+	putchar('\n');
+	return;
+}
+void ascii_print_str(char* str, int n)
+{
+	
+	//按ascii码顺序打印字符串
+	print_str(str, n);
+	return;
+}
+void len_print_str(char* str, int n)
+{
+	
+	//按字符串长度递增打印字符串
+	print_str(str, n);
+	return;
+}
+void first_print_str(char* str, int n)
+{
+	//按第一个单词顺序打印字符串
+	print_str(str, n);
+	return;
+}
+void p11_11()
+{
+#define ROWS 3
+#define COLUMNS 20
+	char str[ROWS][COLUMNS];
+	int n = 0;
+	int ch;
+	printf("Please Enter %d strings (EOF to quit):\n",ROWS);
+	while (s_gets(str[n],COLUMNS) && n < ROWS-1)
+	{
+		n++;
+	}
+	if (n != 0)
+	{
+		printf("You can choose one of the following opinions:\n "
+			"\tA.Print string directively.\n"
+			"\tB.Print string in order of ASCII order.\n"
+			"\tC.Print string in order of length of strings.\n"
+			"\tD.Print string in order of length of first word.\n"
+			"\tE.Quit.\n"
+		);
+		while ((ch = get_choice()) != 'e')
+		{
+			printf("You have chosen %c\n", ch);
+			switch (ch)
+			{
+			case 'a':
+			{
+				print_str(str, n);
+				break;
+			}
+			case 'b':
+			{
+				ascii_print_str(str, n);
+				break;
+			}
+			case 'c':
+			{
+				len_print_str(str, n);
+				break;
+			}
+			case 'd':
+			{
+				first_print_str(str, n);
+				break;
+			}
+			default:
+			{
+				printf("Entered wrong.\n");
+				break;
+			}
+
+			}
+		
+			printf("You can choose one of the following opinions:\n "
+				"\tA.Print string directively.\n"
+				"\tB.Print string in order of ASCII order.\n"
+				"\tC.Print string in order of length of strings.\n"
+				"\tD.Print string in order of length of first word.\n"				
+				"\tE.Quit.\n"
+				);
+		}
+	
+
+	}
+	else
+	{
+		printf("You entered nothing.\n");
+	}
+	printf("DONE!\n\n");
+	return;
+
+}
