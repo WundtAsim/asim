@@ -79,8 +79,13 @@ void p11_7();
 
 void eatline(void);
 int get_choice(void);
-void print_str(char* str, int n);
-void ascii_print_str(char* str, int n);
-void len_print_str(char* str, int n);
-void first_print_str(char* str, int n);
+void print_str(char* str[], int n);
+void ascii_print_str(char* str[], int n);
+void len_print_str(char* str[], int n);
+int word(char* str);
+void first_print_str(char* str[], int n);
 void p11_11();
+
+
+void p11_13(void);
+

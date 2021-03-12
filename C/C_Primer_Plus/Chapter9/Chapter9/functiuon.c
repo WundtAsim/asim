@@ -751,7 +751,7 @@ int get_choice(void)
 	return ch;
 	
 }
-void print_str(char* str, int n)
+void print_str(char* str[], int n)
 {
 	//直接打印字符串
 	printf("Source string:\n");
@@ -762,23 +762,80 @@ void print_str(char* str, int n)
 	putchar('\n');
 	return;
 }
-void ascii_print_str(char* str, int n)
+void ascii_print_str(char* str[], int n)
 {
-	
 	//按ascii码顺序打印字符串
+	char* temp;
+	for (int top = 0; top < n-1; top++)
+	{
+		for (int seek = top + 1; seek < n; seek++)
+		{
+			if (strcmp(str[top], str[seek]) > 0)
+			{
+				temp = str[top];
+				str[top] = str[seek];
+				str[seek] = temp;
+			}
+		}
+	}
+
 	print_str(str, n);
 	return;
 }
-void len_print_str(char* str, int n)
+void len_print_str(char* str[], int n)
 {
-	
 	//按字符串长度递增打印字符串
+	char* temp;
+	for (int top = 0; top < n-1; top++)
+	{
+		for (int seek = top + 1; seek < n; seek++)
+		{
+			if (strlen(str[top]) > strlen(str[seek]))
+			{
+				temp = str[top];
+					str[top] = str[seek];
+					str[seek] = temp;
+			}
+		}
+		
+	}
+
 	print_str(str, n);
 	return;
 }
-void first_print_str(char* str, int n)
+int word(char* str)
 {
-	//按第一个单词顺序打印字符串
+	int length = 0;
+
+	/*统计字符串第一个非空白字符的单词
+	长度并作为返回值传递给调用函数;*/
+	while (isspace(*str))
+	{
+		str++;
+	}
+	while (*str != '\0')
+	{
+		length++;
+		str++;
+	}
+	return length;
+}
+void first_print_str(char* str[], int n)
+{
+	//按第一个单词长度顺序打印字符串
+	char* temp;
+	for (int top = 0; top < n - 1; top++)
+	{
+		for (int seek = top+1; seek < n; seek++)
+		{
+			if (word(str[top]) > word(str[seek]) )
+			{
+				temp = str[top];
+				str[top] = str[seek];
+				str[seek] = temp;
+			}
+		}
+	}
 	print_str(str, n);
 	return;
 }
@@ -786,14 +843,20 @@ void p11_11()
 {
 #define ROWS 3
 #define COLUMNS 20
-	char str[ROWS][COLUMNS];
+	char str[ROWS][COLUMNS];//字符串二维数组
+	char* ptstr[ROWS];//内含指针变量的数组。
 	int n = 0;
 	int ch;
 	printf("Please Enter %d strings (EOF to quit):\n",ROWS);
-	while (s_gets(str[n],COLUMNS) && n < ROWS-1)
+	while (s_gets(str[n], COLUMNS))
 	{
+		ptstr[n] = str[n];//设置指针指向字符串
 		n++;
+		if (n >= ROWS)
+			break;
 	}
+	
+
 	if (n != 0)
 	{
 		printf("You can choose one of the following opinions:\n "
@@ -810,22 +873,22 @@ void p11_11()
 			{
 			case 'a':
 			{
-				print_str(str, n);
+				print_str(ptstr, n);
 				break;
 			}
 			case 'b':
 			{
-				ascii_print_str(str, n);
+				ascii_print_str(ptstr, n);
 				break;
 			}
 			case 'c':
 			{
-				len_print_str(str, n);
+				len_print_str(ptstr, n);
 				break;
 			}
 			case 'd':
 			{
-				first_print_str(str, n);
+				first_print_str(ptstr, n);
 				break;
 			}
 			default:
@@ -854,4 +917,19 @@ void p11_11()
 	printf("DONE!\n\n");
 	return;
 
+}
+
+
+void p11_13(void)
+{
+	char b[3][8] = {"in","my","heart"};
+	char* a[3] = {NULL,NULL,NULL};
+		
+	for (int i = 0; i < 3; i++)
+	{
+		*(a+i) = b[i];
+		printf("%s\nadress: %p\na(adress) is %p, a(char)is %c, \n", a[i],a[i],*(a[i]+1),*(a[i]+1));
+		
+	}
+	
 }
