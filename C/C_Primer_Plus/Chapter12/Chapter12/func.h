@@ -6,6 +6,14 @@
 #include<ctype.h>
 #include<time.h>
 
+/*-------------p12_9-------------*/
+
+void p12_9(void);
+
+/*-------------p12_8-------------*/
+int *make_array(int elem,int val);
+void p12_8(void);
+
 /*-------------p12_6-------------*/
 void occur_times(int* arr, int n, int j);
 void p12_6(void);

@@ -2,6 +2,97 @@
 #include "func.h"
 
 
+/*-------------p12_9-------------*/
+
+void p12_9(void)
+{
+    printf("How many wordsdo you wisn to enter? \n");
+    int n;
+    scanf_s("%d", &n);
+    printf("Enter your %d words now:\n", n);
+
+    char** words;
+    int len;
+    char temp[100] = {0};
+    if (words = (char**)malloc(n * sizeof(char*)))
+    {
+        for (int i = 0; i < n; i++)
+        {
+          scanf_s("%s", temp,99);
+          len = strlen(temp) + 1;
+          words[i] = (char*)malloc(len * sizeof(char));
+          if (NULL == words[i])
+          {
+              printf("Memory allocation failed!\n");
+              exit(-1);
+          }
+          strcpy_s(words[i],len, temp);
+          //数组不要过界：中间为缓冲区大小。
+          puts(words[i]);
+          //↑从临时数组中把单词拷贝到动态分配的存储空间中;
+        }
+
+        printf("Here are your %d words:\n", n);
+        for (int i = 0; i < n; i++)
+        {
+            puts(words[i]);
+            free(words[i]);
+          //  words[i] = NULL;
+        }
+        free(words);
+     //   words = NULL;
+        //↑指针仍然指向malloc分配的存储空间;
+        //↑因此令指针指向NULL后防止内存滥用;
+
+    }
+    else
+    {
+        printf("Memory allocation failed!\n");
+        exit(EXIT_FAILURE);
+    }
+
+        
+}
+
+/*-------------p12_8-------------*/
+int* make_array(int elem, int val)
+{ 
+    int* p = NULL;
+    p = (int*)malloc(elem * sizeof(int));
+    if (p == NULL)
+    {
+        puts("Memory allocation failed,Goodbye.");
+        exit(EXIT_FAILURE);
+    }
+   
+    for (int i = 0; i < elem; i++)
+    {
+        p[i] = val;
+    }       
+    return p;
+}
+void p12_8(void)
+{
+    int* pa;
+    int size;
+    int value;
+    printf("Enter the number of elements: ");
+    while (scanf_s("%d", &size)== 1 && size>0)
+    {
+        printf("Enter the initialization value: ");
+        scanf_s("%d", &value);
+        pa = make_array(size, value);
+        if (pa)
+        {
+            show_array(pa, size);
+            free(pa);
+
+        }
+        printf("Enter the number of elements (< 1 to quit): ");
+    }
+    printf("Done!\n");
+}
+
 /*-------------p12_6-------------*/
 void occur_times(int *arr,int n, int j)
 {
@@ -43,14 +134,16 @@ void p12_6(void)
 
 void show_array(const int *arr, int n)
 {
-    for (int row = 0; row < 10; row++)
-    {
-        for (int i = 0; i < n / 10; i++)
+   
+        for (int i = 0; i < n; i++)
         {
-            printf("%-4d", arr[10 * row + i]);
+
+            printf("%-4d", arr[i]);
+            if (!((i+1)% 8) )
+                putchar('\n');
         }
         putchar('\n');
-    }
+    
    
 }
 void sort(int *arr, int n)
