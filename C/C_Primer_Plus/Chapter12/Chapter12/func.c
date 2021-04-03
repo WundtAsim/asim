@@ -2,6 +2,49 @@
 #include "func.h"
 
 
+/*-------------p13_1-------------*/
+void p13_1(void)
+{
+    printf("Enter the file name you want to check: ");
+    char file_name[30];
+    while (fscanf_s(stdin,"%s", file_name,30) != 1)
+    {
+        fprintf(stderr,"Usage : filename\n");
+        exit(EXIT_FAILURE);
+    }
+    strcat_s(file_name,sizeof file_name,"\0");
+    printf("So, the file name is %s, hah!\n", file_name);
+    FILE* fp;
+    fopen_s(&fp, file_name, "r+");
+    if (fp == NULL)
+    {
+        fprintf(stderr, "Can't open file %s\n",file_name);
+        exit(EXIT_FAILURE);
+    }
+    printf("the file %s has already opened. \n", file_name);
+
+    int ch;
+    while ((ch = getc(fp)) != EOF)
+        putc(ch, stdout);
+    putchar('\n');
+    for(int i = 0; i < (int)strlen(file_name); i++)
+    {
+        printf("the %dst character is %c\n",i,file_name[i]);
+        putc(file_name[i], fp);
+    }
+
+
+
+    if (fclose(fp))
+        printf("Error in closing file %s", file_name);
+    else
+        printf("Thank God! The file has been closed.\n");
+
+    fp = NULL;
+
+    return;
+}
+
 /*-------------p12_9-------------*/
 
 void p12_9(void)
