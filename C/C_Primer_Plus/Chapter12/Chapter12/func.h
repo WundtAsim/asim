@@ -6,6 +6,19 @@
 #include<ctype.h>
 #include<time.h>
 
+/*-------------p13_10-------------*/
+void p13_10(void);
+
+/*-------------p13_7-------------*/
+void p13_7(void);
+
+/*-------------p13_3-------------*/
+int readfile(FILE* );
+void p13_3(void);
+
+/*-------------p13_2-------------*/
+int file_copy(FILE* source, FILE* destination);
+void p13_2(int argcount,char **argument);
 
 /*-------------p13_1-------------*/
 void p13_1(void);

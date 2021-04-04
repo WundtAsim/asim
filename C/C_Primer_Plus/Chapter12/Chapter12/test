@@ -1,0 +1,3 @@
+FSEEK(FP, -1L, SEEK_CUR);
+           PUTC(TOUPPER(CH), FP);
+           FSEEK(FP, 0L, SEEK_CUR);

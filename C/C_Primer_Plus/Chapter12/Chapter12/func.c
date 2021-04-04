@@ -1,6 +1,244 @@
 #include <stdio.h>
 #include "func.h"
 
+/*-------------p13_10-------------*/
+void p13_10(void)
+{
+    printf("Enter the finame of waht you want to demonstrate:");
+    char file[30];
+    scanf_s("%s", file, 30);
+    FILE* fp;
+    fopen_s(&fp, file, "r");
+    if (fp==NULL)
+    {
+        printf("Can't open file %s", file);
+        exit(EXIT_FAILURE);
+    }
+    printf("the file %s has been opened.\n", file);
+
+    printf("Enter the location which you want to type:(nagative or q to quit)");
+    long n;
+    while ((1 == scanf_s("%ld", &n)) && n >= 0)
+    {
+        
+        fseek(fp, 0L, SEEK_SET);
+        if (0 == fseek(fp, n, SEEK_SET))
+        {
+            int ch;
+            while (((ch = getc(fp)) != EOF) && ch != '\n')
+            {
+                putc(ch, stdout);
+            }
+            putchar('\n');
+        }
+        else
+            exit(EXIT_FAILURE);
+        
+        printf("Enter the location which you want to type:(nagative or q to quit)");
+    }
+    fclose(fp); fp = NULL;
+    printf("file has been closed.\n");
+    return;
+    
+}
+
+/*-------------p13_7-------------*/
+void p13_7(void)
+{
+    //打开文件1
+    printf("Enter the filename of the first one:");
+    char file_1[30];
+    scanf_s("%s", file_1,30);
+    FILE* fp1;
+    fopen_s(&fp1, file_1, "r");
+    if (fp1 == NULL)
+    {
+        printf("Can't open file \"%s\"", file_1);
+        exit(EXIT_FAILURE);
+    }
+    printf("file \"%s\" opened.\n", file_1);
+    //打开文件2
+    printf("Enter the filename of the second one:");
+    char file_2[30];
+    scanf_s("%s", file_2,30);
+    FILE* fp2;
+    fopen_s(&fp2, file_2, "r");
+    if (fp2 == NULL)
+    {
+        printf("Can't open file \"%s\"", file_2);
+        exit(EXIT_FAILURE);
+    }
+    printf("file \"%s\" opened.\n", file_2);
+
+    int ch1 = 0, ch2 = 0;
+    ch1 = getc(fp1);
+    ch2 = getc(fp2);
+    while (1)
+    {
+        while (ch1 != EOF)
+        {            
+            putc(ch1, stdout);  
+            ch1 = getc(fp1);
+            if (ch1 == '\n')
+            {
+                ch1 = getc(fp1);//若检测到换行，则跳过换行，并跳出循环
+                break;
+            }          
+         
+        }
+        printf("\t");
+        while (ch2 != EOF)
+        {
+            putc(ch2, stdout);
+            ch2 = getc(fp2);
+            if (ch2 == '\n')
+            {
+                ch2 = getc(fp2);//若检测到换行，则跳过换行，并跳出循环
+                break;
+            }
+
+        }
+        putchar('\n');
+
+        if (feof(fp1) && feof(fp2))
+        {
+            break;
+        }
+       
+    }
+    fclose(fp1);
+    fp1 = NULL;
+    fclose(fp2);
+    fp2 = NULL;
+    return;
+}
+
+/*-------------p13_3-------------*/
+int readfile(char* filename)
+{
+    FILE* fp;
+    fopen_s(&fp, filename, "r+");
+    if (fp == NULL)
+    {
+        fprintf(stderr, "Can't open file--%s !\n",filename);
+        exit(EXIT_FAILURE);
+    }
+    fprintf(stdout, "file--%s opened!\n", filename);
+    int ch,cnt = 0; 
+    printf("file content:\n");
+    while ((ch = getc(fp)) != EOF)
+    {
+        putc(ch, stdout);
+        cnt++;
+    }
+    puts("\nDone!");
+    printf("there are %d characters.\n", cnt);
+    if (fclose(fp))
+    {
+        fprintf("Can't close file--%s", filename);
+        exit(EXIT_FAILURE);
+    }
+    else
+        fp = NULL;
+        return 1;
+}
+void p13_3(void)
+{
+    printf("Enter the name of file you want to dispose:");
+    char filename[30];
+    fscanf_s(stdin, "%s", filename,30);
+    readfile(filename);
+    puts("\n\n");
+
+    FILE* fp;
+    fopen_s(&fp, filename, "r+");
+    if (fp == NULL)
+    {
+        fprintf(stderr, "Can't open file--%s !\n", filename);
+        exit(EXIT_FAILURE);
+    }
+    int ch;
+    while (1)
+    {
+        ch = getc(fp);
+        if (ch == EOF)
+           break;
+        else if(isalpha(ch))
+        {
+            fseek(fp, -1L, SEEK_CUR);
+            putc(toupper(ch), fp);
+            fseek(fp, 0L, SEEK_CUR);
+        }
+        else
+        {
+            fseek(fp, -1L, SEEK_CUR);
+            putc(ch, fp);
+            fseek(fp, 0L, SEEK_CUR);            
+        }    
+        
+    }
+    rewind(fp);
+    fclose(fp);
+
+    readfile(filename);
+    return;
+}
+
+/*-------------p13_2-------------*/
+int file_copy(FILE* source, FILE* destination)
+{
+    setvbuf(destination, NULL, _IOFBF, 256);
+    char temp[256];
+    size_t bytes;
+    while ((bytes = fread(temp, sizeof(char), 256, source)) > 0)
+    {
+       
+        fwrite(temp, sizeof(char), bytes, destination);
+        printf("copying!\n");
+    }
+    printf("the bytes is %d\n", (int)bytes);
+    if (fclose(source) || fclose(destination))
+        return 0;
+    else
+    {
+        source = NULL;
+        destination = NULL;
+        return 1;
+    }
+        
+}
+void p13_2(int argcount,char** argument)
+{
+    if (argcount < 3)
+    {
+        printf("Usage: %s source_file destination_file\n", argument[0]);
+        exit(EXIT_FAILURE);
+    }
+    FILE* source_fp;
+    fopen_s(&source_fp, argument[1], "rb");
+    if (source_fp == NULL)
+    {
+        fprintf(stderr, "Can't open source file!\n");
+        exit(EXIT_FAILURE);
+    }
+    printf("...source file has been opened.\n");
+
+    FILE* destination_fp;
+    fopen_s(&destination_fp, argument[2], "wb");
+    if (!destination_fp)
+    {
+        fprintf(stderr, "Can't open destination file!\n");
+        exit(EXIT_FAILURE);
+    }
+    printf("...destination file has been opened.\n");
+
+    if (file_copy(source_fp, destination_fp) == 1)
+        printf("file has been copyed!\n");
+    else
+        printf("Error while coping!\n");
+    return;
+
+}
 
 /*-------------p13_1-------------*/
 void p13_1(void)
