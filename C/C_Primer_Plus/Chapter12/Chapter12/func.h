@@ -6,6 +6,10 @@
 #include<ctype.h>
 #include<time.h>
 
+/*-------------p13_12-------------*/
+FILE* openfile(char* filename);
+void p13_12(void);
+
 /*-------------p13_10-------------*/
 void p13_10(void);
 

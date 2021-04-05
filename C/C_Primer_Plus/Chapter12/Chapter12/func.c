@@ -1,6 +1,288 @@
 #include <stdio.h>
 #include "func.h"
 
+/*-------------p13_12-------------*/
+
+void p13_13(void)
+{
+    printf("Enter the number of x and y pixels:");
+    int x_pixel, y_pixel;
+    scanf_s("%d%d", &x_pixel, &y_pixel,5);
+    //创建0-9代表的灰度图
+    char* imagedig = "imagedig.txt";
+    FILE* fp_imagedig;
+    fp_imagedig = openfile(imagedig);
+
+    //将灰度数值写入文件
+    srand((unsigned int)time(0));
+    for (int j = 0; j < x_pixel; j++)
+    {
+        for (int i = 0; i < y_pixel; i++)
+        {
+            int roll;
+            roll = rand() % 10 + 1;
+
+            fprintf(fp_imagedig, "%d", roll);
+            if (i < y_pixel-1)
+                putc(' ', fp_imagedig);
+            else
+                putc('\n', fp_imagedig);
+        }
+    }
+    fclose(fp_imagedig);
+    fp_imagedig = NULL;
+
+    //读取灰度值文件
+    fopen_s(&fp_imagedig, imagedig, "r+");
+    if (fp_imagedig == NULL)
+        exit(EXIT_FAILURE);
+    int ch;
+    int** temp;
+    temp = (int**)malloc(x_pixel * y_pixel * sizeof(int*));
+    int dig[x_pixel][y_pixel];
+    int(*temp)[30];
+    temp = dig;//用于接收每个数字
+    int count = 0;//用于计数dig数组到末尾
+    while ((ch = getc(fp_imagedig)) != EOF)
+    {
+        if ((isdigit(ch)))
+        {
+            *(*temp + count) = ch - '0';
+            count++;
+            if (count > 20 * 30 - 1)
+                break;//防止溢出数组！                       
+        }
+        else
+            continue;
+
+
+    }
+    printf("so the content is:\n");
+    for (int i = 0; i < 20; i++)
+    {
+        for (int j = 0; j < 30; j++)
+        {
+
+            printf("%d ", dig[i][j]);
+        }putchar('\n');
+    }puts("\n\n");
+    fclose(fp_imagedig);
+    fp_imagedig = NULL;
+
+    /// 画出对应图象
+    printf("so the image is:\n");
+    for (int i = 0; i < 20; i++)
+    {
+        for (int j = 0; j < 30; j++)
+        {
+            int temp;
+            switch (dig[i][j])
+            {
+            case 0:
+            {
+                temp = '\'';
+                break;
+            }
+            case 1:
+            {
+                temp = '.';
+                break;
+            }
+            case 2:
+            {
+                temp = ',';
+                break;
+            }
+            case 3:
+            {
+                temp = '\"';
+                break;
+            }
+            case 4:
+            {
+                temp = ':';
+                break;
+            }
+            case 5:
+            {
+                temp = '-';
+                break;
+            }
+            case 6:
+            {
+                temp = '+';
+                break;
+            }
+            case 7:
+            {
+                temp = '*';
+                break;
+            }
+            case 8:
+            {
+                temp = '%';
+                break;
+            }
+            case 9:
+            {
+                temp = '#';
+                break;
+            }
+            }
+            printf("%c ", temp);
+        }putchar('\n');
+    }
+    printf("Done!\n");
+
+
+    return;
+
+}
+
+/*-------------p13_12-------------*/
+FILE* openfile(char* filename)
+{
+    FILE* fp;
+    fopen_s(&fp, filename, "w+");
+    if (fp == NULL)
+    {
+        printf("Can't open file %s.\n", filename);
+        exit(EXIT_FAILURE);
+    }
+    printf("file %s opened.\n", filename);
+    return fp;
+}
+void p13_12(void)
+{
+    //创建0-9代表的灰度图
+    char* imagedig = "imagedig.txt";
+    FILE* fp_imagedig;
+    fp_imagedig = openfile(imagedig);
+    
+    //将灰度数值写入文件
+    srand((unsigned int)time(0));
+    for (int j = 0; j < 20; j++)
+    {
+        for (int i = 0; i < 30; i++)
+        {
+            int roll;
+            roll = rand() % 10 + 1;
+            
+            fprintf(fp_imagedig, "%d", roll);
+            if (i < 29)
+                putc(' ', fp_imagedig);
+            else
+                putc('\n', fp_imagedig);
+        }
+    }
+    fclose(fp_imagedig);
+    fp_imagedig = NULL;
+
+    //读取灰度值文件
+    fopen_s(&fp_imagedig, imagedig, "r+");
+    if (fp_imagedig == NULL)
+        exit(EXIT_FAILURE);    
+    int ch;
+    int dig[20][30];
+    int(* temp)[30];
+    temp = dig;//用于接收每个数字
+    int count = 0;//用于计数dig数组到末尾
+    while ((ch = getc(fp_imagedig)) != EOF)
+    {        
+        if ((isdigit(ch)))
+        {
+            *(*temp + count)= ch - '0';
+            count++;
+            if (count > 20 * 30-1)
+                break;//防止溢出数组！                       
+        }
+        else
+            continue;  
+        
+              
+    }
+    printf("so the content is:\n");
+    for (int i = 0; i < 20; i++)
+    {
+        for (int j = 0; j < 30; j++)
+        {
+            
+            printf("%d ", dig[i][j]);
+        }putchar('\n');
+    }puts("\n\n");
+    fclose(fp_imagedig);
+    fp_imagedig = NULL;   
+
+    /// 画出对应图象
+    printf("so the image is:\n");
+    for (int i = 0; i < 20; i++)
+    {
+        for (int j = 0; j < 30; j++)
+        {
+            int temp;
+            switch (dig[i][j])
+            {
+            case 0:
+            {
+                temp = '\'';
+                break;
+            }
+            case 1:
+            {
+                temp = '.';
+                break;
+            }
+            case 2:
+            {
+                temp = ',';
+                break;
+            }
+            case 3:
+            {
+                temp = '\"';
+                break;
+            }
+            case 4:
+            {
+                temp = ':';
+                break;
+            }
+            case 5:
+            {
+                temp = '-';
+                break;
+            }
+            case 6:
+            {
+                temp = '+';
+                break;
+            }
+            case 7:
+            {
+                temp = '*';
+                break;
+            }
+            case 8:
+            {
+                temp = '%';
+                break;
+            }
+            case 9:
+            {
+                temp = '#';
+                break;
+            }
+            }
+            printf("%c ", temp);
+        }putchar('\n');
+    }
+    printf("Done!\n");
+
+
+    return;
+    
+}
+
 /*-------------p13_10-------------*/
 void p13_10(void)
 {
