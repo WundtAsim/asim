@@ -2,25 +2,62 @@
 #include "func.h"
 
 /*-------------p13_12-------------*/
+void eliminate_noise(char* filename,int x,int y)
+{
+    //打开文件
+    FILE* fp;
+    fopen_s(&fp, filename, "ab+");
+    if (fp == NULL)
+    {
+        printf("Can't open file %s.\n", filename);
+        exit(EXIT_FAILURE);
+    }
+    printf("file %s opened.\n", filename);
+
+    //消除噪声
+    int** image;
+    image = (int**)malloc(x * sizeof(int*));
+    if (image == NULL)
+        exit(EXIT_FAILURE);
+    for (int i = 0; i < x; i++)
+    {
+        image[i] = (int*)malloc(y * sizeof(int));
+        if (image[i] == NULL)
+            exit(EXIT_FAILURE);
+    }
+
+    for (int i = 0; i < x; i++)
+    {
+        fread(image[i], sizeof(int), y, fp);
+        printf("")
+    }
+    
+        
+
+
+    fclose(fp);
+    fp = NULL;
+    return;
+}
 
 void p13_13(void)
 {
     printf("Enter the number of x and y pixels:");
     int x_pixel, y_pixel;
-    scanf_s("%d%d", &x_pixel, &y_pixel,5);
+    scanf_s("%5d%5d", &x_pixel, &y_pixel);
     //创建0-9代表的灰度图
     char* imagedig = "imagedig.txt";
     FILE* fp_imagedig;
     fp_imagedig = openfile(imagedig);
 
     //将灰度数值写入文件
-    srand((unsigned int)time(0));
+    srand((unsigned int)500);
     for (int j = 0; j < x_pixel; j++)
     {
         for (int i = 0; i < y_pixel; i++)
         {
             int roll;
-            roll = rand() % 10 + 1;
+            roll = rand() % 10;
 
             fprintf(fp_imagedig, "%d", roll);
             if (i < y_pixel-1)
@@ -37,45 +74,56 @@ void p13_13(void)
     if (fp_imagedig == NULL)
         exit(EXIT_FAILURE);
     int ch;
-    int** temp;
-    temp = (int**)malloc(x_pixel * y_pixel * sizeof(int*));
-    int dig[x_pixel][y_pixel];
-    int(*temp)[30];
-    temp = dig;//用于接收每个数字
+    int** dig= NULL;
+    dig = (int**)malloc(x_pixel * sizeof(int*));
+    if (dig == NULL)
+        exit(EXIT_FAILURE);
+    for (int i = 0; i < x_pixel; i++)
+    {
+        dig[i] = (int*)malloc(y_pixel * sizeof(int));
+        if (dig[i] == NULL)
+            exit(EXIT_FAILURE);
+    }        
+    
     int count = 0;//用于计数dig数组到末尾
     while ((ch = getc(fp_imagedig)) != EOF)
     {
         if ((isdigit(ch)))
         {
-            *(*temp + count) = ch - '0';
+            dig[count / x_pixel][count % x_pixel] = ch - '0';
+            /*多次调用malloc分配的地址不一定连续，因实际物理内存可能分页，所以间隔分配。
+            * 因此不用下行代码↓
+            //*(*dig + count) = ch - '0';
+            printf("dig[%d] = %d, address:%p\n", 
+                count, dig[count/x_pixel][count%x_pixel],&dig[count / x_pixel][count % x_pixel]);
+            */
             count++;
-            if (count > 20 * 30 - 1)
+            if (count > x_pixel * y_pixel - 1)
                 break;//防止溢出数组！                       
         }
         else
             continue;
-
-
     }
+    count = 0;
     printf("so the content is:\n");
-    for (int i = 0; i < 20; i++)
+    for (int i = 0; i < x_pixel; i++)
     {
-        for (int j = 0; j < 30; j++)
+        for (int j = 0; j < y_pixel; j++)
         {
-
             printf("%d ", dig[i][j]);
         }putchar('\n');
     }puts("\n\n");
-    fclose(fp_imagedig);
+    if(fclose(fp_imagedig))
+        exit(EXIT_FAILURE);
     fp_imagedig = NULL;
 
     /// 画出对应图象
     printf("so the image is:\n");
-    for (int i = 0; i < 20; i++)
+    for (int i = 0; i < x_pixel; i++)
     {
-        for (int j = 0; j < 30; j++)
+        for (int j = 0; j < y_pixel; j++)
         {
-            int temp;
+            int temp = 0;
             switch (dig[i][j])
             {
             case 0:
@@ -129,12 +177,15 @@ void p13_13(void)
                 break;
             }
             }
-            printf("%c ", temp);
+            printf("%c ",temp);
         }putchar('\n');
     }
     printf("Done!\n");
 
-
+    
+    for (int i = 0; i < x_pixel; i++)
+        free(dig[i]);
+    free(dig);
     return;
 
 }
@@ -166,7 +217,7 @@ void p13_12(void)
         for (int i = 0; i < 30; i++)
         {
             int roll;
-            roll = rand() % 10 + 1;
+            roll = rand() % 10 ;
             
             fprintf(fp_imagedig, "%d", roll);
             if (i < 29)
@@ -274,6 +325,7 @@ void p13_12(void)
             }
             }
             printf("%c ", temp);
+            
         }putchar('\n');
     }
     printf("Done!\n");

@@ -6,6 +6,10 @@
 #include<ctype.h>
 #include<time.h>
 
+/*-------------p13_13-------------*/
+void eliminate_noise(char* filename,int x,int y);
+void p13_13(void);
+
 /*-------------p13_12-------------*/
 FILE* openfile(char* filename);
 void p13_12(void);
