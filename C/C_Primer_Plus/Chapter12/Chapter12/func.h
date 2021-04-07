@@ -7,7 +7,7 @@
 #include<time.h>
 
 /*-------------p13_13-------------*/
-void eliminate_noise(char* filename,int x,int y);
+void eliminate_noise(char* filename,const int x,const int y);
 void p13_13(void);
 
 /*-------------p13_12-------------*/

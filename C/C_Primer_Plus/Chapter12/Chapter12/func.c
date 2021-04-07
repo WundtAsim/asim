@@ -2,11 +2,11 @@
 #include "func.h"
 
 /*-------------p13_12-------------*/
-void eliminate_noise(char* filename,int x,int y)
+void eliminate_noise(char* filename,const int x,const int y)
 {
     //打开文件
     FILE* fp;
-    fopen_s(&fp, filename, "ab+");
+    fopen_s(&fp, filename, "r+");
     if (fp == NULL)
     {
         printf("Can't open file %s.\n", filename);
@@ -14,8 +14,12 @@ void eliminate_noise(char* filename,int x,int y)
     }
     printf("file %s opened.\n", filename);
 
+    if (x <= 0 || y <= 0) {
+        printf("行数或列数不合法！\n");
+        exit(-1);
+    }
     //消除噪声
-    int** image;
+    int** image = NULL;
     image = (int**)malloc(x * sizeof(int*));
     if (image == NULL)
         exit(EXIT_FAILURE);
@@ -26,14 +30,110 @@ void eliminate_noise(char* filename,int x,int y)
             exit(EXIT_FAILURE);
     }
 
+    //写入数组
+    
     for (int i = 0; i < x; i++)
     {
-        fread(image[i], sizeof(int), y, fp);
-        printf("")
+        int j = 0;
+        int ch;
+        while ((ch = getc(fp))!=EOF && ch!='\n')
+        { 
+            if (isdigit(ch))
+            {
+                image[i][j] = ch - '0';
+                j++;
+            }
+            else
+                continue;
+          
+        }
+        for (int k = 0; k < y; k++)
+            printf("%d ", image[i][k]); 
+        putchar('\n');
     }
-    
-        
+    //处理数组（消噪）
+    for (int i = 0; i < x; i++){    
+        for (int j = 0; j < y; j++) {
+            //首行
+            if (i == 0) {
+                //左上顶点
+                if (j == 0) {
+                    if ((image[i][j] - image[i][j + 1]) > 1 && (image[i][j] - image[i + 1][j]) > 1)
+                        image[i][j] = (image[i + 1][j] + image[i][j + 1]) / 2;
+                }                    
+                //右上顶点
+                else if (j == y - 1) {
+                    if ((image[i][j] - image[i][j - 1]) > 1 && (image[i][j] - image[i + 1][j]) > 1)
+                        image[i][j] = (image[i + 1][j] + image[i][j - 1]) / 2;
+                }                    
+                //首行内点
+                else {
+                    if ((image[i][j] - image[i][j + 1]) > 1 && (image[i][j] - image[i + 1][j]) > 1 && (image[i][j] - image[i][j-1]) > 1)
+                        image[i][j] = (image[i + 1][j] + image[i][j + 1] + image[i][j - 1]) / 3;
+                }       
+            }
+            //尾行
+            else if (i == x-1) {
+                //左下顶点
+                if (j == 0) {
+                    if ((image[i][j] - image[i][j + 1]) > 1 && (image[i][j] - image[i - 1][j]) > 1)
+                        image[i][j] = (image[i - 1][j] + image[i][j + 1]) / 2;
+                }
+                //右下顶点
+                else if (j == y - 1) {
+                    if ((image[i][j] - image[i][j - 1]) > 1 && (image[i][j] - image[i - 1][j]) > 1)
+                        image[i][j] = (image[i - 1][j] + image[i][j - 1]) / 2;
+                }
+                //尾行内点
+                else {
+                    if ((image[i][j] - image[i][j - 1]) > 1 && (image[i][j] - image[i][j+1]) > 1 && (image[i][j] - image[i - 1][j]) > 1)
+                        image[i][j] = (image[i][j-1] + image[i][j + 1] + image[i-1][j]) / 3;
+                }
+            }
+            //首列内点
+            if (j == 0) {  
+                if (i == 0 || i == x - 1)
+                    break;
+                if ((image[i][j] - image[i+1][j]) > 1 && (image[i][j] - image[i][j + 1]) > 1 && (image[i][j] - image[i - 1][j]) > 1)
+                   image[i][j] = (image[i+1][j] + image[i][j + 1] + image[i - 1][j]) / 3;                
+            }
+            //尾列内点
+            else if (j == y-1) {
+                if (i == 0 || i == x - 1)
+                    break;
+                if ((image[i][j] - image[i + 1][j]) > 1 && (image[i][j] - image[i][j - 1]) > 1 && (image[i][j] - image[i - 1][j]) > 1)
+                    image[i][j] = (image[i + 1][j] + image[i][j - 1] + image[i - 1][j]) / 3;
+            }
 
+            //数组内部值：
+            if ((image[i][j] - image[i + 1][j]) > 1 && (image[i][j] - image[i][j - 1]) > 1 && (image[i][j] - image[i - 1][j]) > 1 && (image[i][j] - image[i][j+1]) > 1) {
+                image[i][j] = (image[i - 1][j] + image[i + 1][j] + image[i][j - 1] + image[i][j + 1]) / 4;
+                printf("haha\n");
+            }
+
+
+        }
+
+    }
+
+    //写入文件
+    rewind(fp);
+    for (int j = 0; j < x; j++)
+    {
+        for (int i = 0; i < y; i++)
+        {
+            fprintf(fp, "%d", image[j][i]);
+            if (i < y - 1)
+                putc('-', fp);
+            else
+                putc('\n', fp);
+        }
+    }    
+
+    //清理内存
+    for (int i = 0; i < x; i++)
+        free(image[i]);
+    free(image);  
 
     fclose(fp);
     fp = NULL;
@@ -46,7 +146,7 @@ void p13_13(void)
     int x_pixel, y_pixel;
     scanf_s("%5d%5d", &x_pixel, &y_pixel);
     //创建0-9代表的灰度图
-    char* imagedig = "imagedig.txt";
+    const char* imagedig = "imagedig.txt";
     FILE* fp_imagedig;
     fp_imagedig = openfile(imagedig);
 
@@ -69,12 +169,15 @@ void p13_13(void)
     fclose(fp_imagedig);
     fp_imagedig = NULL;
 
+    //处理噪声
+    eliminate_noise(imagedig, x_pixel, y_pixel);
+
     //读取灰度值文件
     fopen_s(&fp_imagedig, imagedig, "r+");
     if (fp_imagedig == NULL)
         exit(EXIT_FAILURE);
     int ch;
-    int** dig= NULL;
+    int** dig = NULL;
     dig = (int**)malloc(x_pixel * sizeof(int*));
     if (dig == NULL)
         exit(EXIT_FAILURE);
