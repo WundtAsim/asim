@@ -1,6 +1,284 @@
 #include <stdio.h>
 #include "func.h"
 
+/*-------------p14_11-------------*/
+void show_menu(void) {
+    printf("which of the following processes you want to exert on the data?"
+        "(q to quit)\n");
+    printf("a.sin\tb.square root\nc.exp\td.log\n");
+    return;
+}
+void transform(double* source, double* target, int n, double(*fp)(double)) {
+    for (int i = 0; i < n; i++) {
+        target[i] = fp(source[i]);
+    }
+    printf("source array is:\n");
+    for (int i = 0; i < 100; i++) {
+        printf("%.1f ", source[i]);
+        if ((i+1) % 10 == 0)
+            putchar('\n');
+    }
+    printf("\n\ntarget array is:\n");
+    for (int i = 0; i < 100; i++) {
+        printf("%.1f ", target[i]);
+        if ((i+1) % 10 == 0)
+            putchar('\n');
+    }
+    return;
+}
+void p14_11(void) {
+    double(*fp)(double) = NULL;
+    show_menu();
+    char ch;
+    double source[100];
+    double target[100];
+    for (int i = 0; i < 100; i++)
+        source[i] = i;
+    while (scanf_s("%c", &ch) == 1 && ch != 'q') {
+        while (getchar() != '\n')
+            continue;
+        if (ch >= 'a' && ch <= 'd') {
+            switch (ch) {
+            case 'a':fp = sin; break;
+            case 'b':fp = sqrt; break;
+            case 'c':fp = exp; break;
+            case 'd':fp = log; break;
+            }
+        }
+        else {
+            printf("Enter the right option!\n");
+            show_menu();
+            continue;
+        }        
+        transform(source, target, 100, fp);
+        show_menu();
+    }
+    
+    
+    return;
+}
+
+/*-------------p14_5-------------*/
+struct name {
+    char fname[20];
+    char lname[20];
+};
+struct student {
+    struct name s_name;
+    float grade[3];
+    float average;
+};
+
+void set_students(struct student list[], int n) {
+    for (int i = 0; i < n; i++) {        
+        for (int j = 0; j < 3; j++) {
+            printf("Please enter the score of subject %d for %s %s:\n", j + 1, list[i].s_name.fname, list[i].s_name.lname);
+            while (scanf_s("%g", &list[i].grade[j])!=1) {
+                while (getchar() != '\n')
+                    continue;
+                printf("Enter the right grade.\n");
+            }
+        }        
+    }
+    return;
+}
+void get_averages(struct student list[], int n) {
+    double aggregate = 0.0;
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < 3; j++) {
+            aggregate += list[i].grade[j];
+        }
+        list[i].average = aggregate / 3;
+        aggregate = 0.0;        
+    }
+    return;
+}
+void show_messages(const struct student list[], int n) {
+    printf("%+20s %10s %10s %10s %15s\n", "name", "grade 1", "grade 2", "grade 3", "average grade");
+    for (int i = 0; i < n; i++) {
+        printf("%10s%10s %10.1f %10.1f %10.1f %15.1f\n",
+            list[i].s_name.fname, list[i].s_name.lname, 
+            list[i].grade[0], list[i].grade[1], list[i].grade[2], 
+            list[i].average);
+    }
+    return;
+}
+void show_averages(const struct student list[], int n) {
+    double aggregate= 0.0;
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < 3; j++) {
+            aggregate += list[i].grade[j];
+        }
+    }
+    aggregate /= (3 * n);
+    printf("The average grade of the class is %lf\n", aggregate);
+}
+void p14_5(void) {
+#define CSIZE 4
+    struct student classes[CSIZE] =
+    {
+        {"Harry", "Potter"},
+        {"Hermoine", "Granger"},
+        {"Ronald", "Weasley"},
+        {"Wundt", "Asim"}
+    };
+    set_students(classes, CSIZE);
+    get_averages(classes, CSIZE);
+    show_messages(classes, CSIZE);
+    show_averages(classes, CSIZE);
+    #undef CSIZE
+    return;
+}
+
+/*-------------p14_4-------------*/
+#define N  20
+struct names {
+    char fname[N];
+    char mname[N];
+    char lname[N];
+};
+struct id {
+    char number[N];
+    struct names name;
+};
+void show_id(const struct id identi[], int n)
+{
+    printf("All the ID messages:\n");
+    for (int i = 0; i < n; i++) {
+        if (identi[i].name.mname[0] == '\0') {
+            printf("%s,%s. -- %s\n", identi[i].name.fname, identi[i].name.lname, identi[i].number);
+        }
+        else {
+            printf("%s,%c.%s. -- %s\n", identi[i].name.fname, identi[i].name.mname[0], identi[i].name.lname, identi[i].number);
+        }
+    }
+    return;
+}
+void p14_4(void)
+{    
+    struct id iden[4] = {
+        {"12345","Harry","James","Potter"},
+        {"23456","Hermione","Jean","Granger"},
+        {"34567","Ronald Bilius","Ron","Weasley"},
+        {"112303","Wundt","","Asim"}
+    };
+    show_id(&iden, 4);
+    #undef N
+    return;
+}
+
+/*-------------p14_2-------------*/
+struct month {
+    char name[10];
+    char mon[4];
+    int days;
+};
+struct month months[12] = {
+        {"January","jan",31},
+        {"Fenruary","feb",29},
+        {"March","mar",31},
+        {"April","apr",30},
+        {"May","may",31},
+        {"June","jun",30},
+        {"July","jul",31},
+        {"August","aug",31},
+        {"September","sep",30},
+        {"October","oct",31},
+        {"November","nov",30},
+        {"December","dec",31}
+};
+int day_count(int day, char* month)
+{
+    int count = 0;
+    int index = 0;
+    while (month[index] != '\0') {
+        month[index] = tolower(month[index]);  
+        index++;
+    }
+    month[3] = '\0';
+    index = 0;
+
+    for (int i = 0; i < 12; i++) {
+        if (strcmp(month, months[i].mon) == 0)
+            index = i+1;
+    }
+    for (int j = 0; j < index; j++) {
+        count += months[j].days;
+    }
+    count += day;
+    return count;
+}
+void p14_2(void)
+{
+    extern struct month months[];
+    printf("Please enter day, month and year (q to quit): ");
+    int day; 
+    char month[11]; 
+    int year;
+    while (scanf_s("%d %11s %d", &day, month,11, &year) == 3) {
+        if (year % 4 == 0)
+            months[1].days = 29;
+        else
+            months[1].days = 28;
+
+        int count = day_count(day, month);
+        if (count)
+            printf("There are %d days from the beginning of %d to %s %d\n""you can enter again:(q to quit)", count, year, month, day);
+        else
+            printf("ERROR:enterd wrong datas!\n"
+                "you can enter again:(q to quit)");
+    }
+    printf("DONE!\n");
+    return;
+}
+
+
+/*-------------p14_1-------------*/
+
+int days(char* month)
+{
+    int count = 0;
+    int index = 0;
+    for (int i = 0; i < 3; i++) {
+        month[i] = tolower(month[i]);
+    }
+    for (int i = 0; i < 12; i++) {
+        if(strcmp(month, months[i].mon) == 0)
+            index = i+1;                   
+    }
+    for (int j = 0; j < index; j++){
+        count += months[j].days;
+    }
+    return count;    
+}
+void p14_1(void)
+{   
+    extern struct month months[];
+    printf("Enter the short for the month:(q to quit)");
+    char month[5];
+    
+    while (scanf_s("%3s", month, 4) == 1 && month[0] != 'q') {
+       int count;
+       count = days(month);
+       if (count) {
+        printf("The congragate number of days is %d\n", count);
+        printf("Done\n");
+        printf("you can enter again:(q to quit)");
+    }
+    else
+        printf("ERRPR:Input must be right.\nyou can enter again:");
+    }   
+    
+    
+        
+    
+    return;
+    
+
+
+
+}
+
 /*-------------p13_12-------------*/
 void eliminate_noise(char* filename,const int x,const int y)
 {

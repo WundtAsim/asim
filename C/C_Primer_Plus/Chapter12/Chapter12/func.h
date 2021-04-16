@@ -6,6 +6,30 @@
 #include<ctype.h>
 #include<time.h>
 
+/*-------------p14_11-------------*/
+void show_menu(void);
+void transform(double* source, double* target, int n, double(*fp)(double));
+void p14_11(void);
+
+/*-------------p14_5-------------*/
+void set_students(struct student list[], int n);
+void get_averages(struct student list[], int n);
+void show_messages(const struct student list[], int n);
+void show_averages(const struct student list[], int n);
+void p14_5(void);
+
+/*-------------p14_4-------------*/
+void show_id(const struct id identi[], int );
+void p14_4(void);
+
+/*-------------p14_2-------------*/
+int day_count(int day, char* month);
+void p14_2(void);
+
+/*-------------p14_1-------------*/
+int days(char* month);
+void p14_1(void);
+
 /*-------------p13_13-------------*/
 void eliminate_noise(char* filename,const int x,const int y);
 void p13_13(void);
