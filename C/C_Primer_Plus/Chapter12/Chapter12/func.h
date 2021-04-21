@@ -6,6 +6,15 @@
 #include<ctype.h>
 #include<time.h>
 
+void bitoperate(char* ch,char* new,char choice);
+void show_bitoperate(void);
+void p15_2(void);
+
+/*-------------p15_1-------------*/
+char* i2b(int n);
+int b2i(char* ch);
+void p15_1(void);
+
 /*-------------p14_11-------------*/
 void show_menu(void);
 void transform(double* source, double* target, int n, double(*fp)(double));

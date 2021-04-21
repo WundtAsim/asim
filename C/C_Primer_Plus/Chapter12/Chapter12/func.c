@@ -1,6 +1,87 @@
 #include <stdio.h>
 #include "func.h"
 
+/*-------------p15_2-------------*/
+void show_bitoperate(void) {
+    printf("You van choose the operations following(q to quit):\n");
+    printf("a.~\tb.&\nc.|\td.^\n");
+    return;
+}
+void bitoperate(char* ch,char* new,char choice) {
+    int n = b2i(ch);
+    printf("the n is %d\n", n);
+    switch (choice){
+    case 'a':n = ~n; break;
+    case 'b':n &= 01; break;
+    case 'c':n |= 01; break;
+    case 'd':n ^= 01; break;
+    default:printf("Entered wrong choice!\n"); exit(-1);
+    }
+    for (int i = 31 - 1; i >= 0; i--, n >>= 1) {
+        new[i] = (01 & n) + '0';
+    }
+    new[31] = '\0';
+    return;
+}
+void p15_2(void) {
+    printf("Enter a string of Binary string:(q to quit)");
+    char b_stirng[32];
+    char b_new[32];
+    while ((scanf_s("%s", b_stirng,32) == 1)&& (b_stirng[0]!='q')) {
+        while (getchar() != '\n')
+            continue;
+        show_bitoperate();
+        char c;
+        c = getchar();
+        while (getchar() != '\n')
+            continue;
+        printf("your input is %c\n", c);
+        bitoperate(b_stirng, b_new, c);
+        printf("the opeartion %c is %s\n\n", c, b_new);
+        printf("you can enter again:(q to quit):");
+
+    }
+    return;
+}
+
+/*-------------p15_1-------------*/
+char* i2b(int n) {
+    static char ch_b[32+1];
+    for (int i = 32 - 1; i >= 0; i--,n>>=1) 
+        ch_b[i] = (01 & n) + '0';
+    ch_b[32] = '\0';
+    //printf("the ch is %s\n", ch_b);
+    return ch_b;
+}
+int b2i(char* ch) {
+    int n = 0;
+    if (ch[0] == '0') {
+        for (int i = strlen(ch) - 1, j = 0; i >= 0; i--, j++) {
+            n += (ch[i] - '0') * pow(2 , j);
+        }
+        return n;
+    }
+    else if (ch[0] == '1') {
+        int index = 1;
+        
+        for (int i = strlen(ch) - 1, j = 0; i > 0; i--, j++) {
+            int middle = ch[i] == '0' ? 1 : 0;
+            n += middle * pow(2, j);
+        }
+        n += 1;
+        return (-1*n);
+    }
+    else
+        exit(EXIT_FAILURE);
+}
+void p15_1(void) {
+    char* pbin = "11001001";
+    int bin = 73;
+    printf("int to binary: %d turns to be %s\n", bin, i2b(bin));
+    printf("binary to int: %s turns to be %d\n", pbin, b2i(pbin));
+    return;
+}
+
 /*-------------p14_11-------------*/
 void show_menu(void) {
     printf("which of the following processes you want to exert on the data?"
