@@ -1,6 +1,159 @@
 #include <stdio.h>
 #include "func.h"
 
+/*-------------p15_6-------------*/
+struct message {
+    //位字段
+    unsigned int font : 8;
+    unsigned int size : 7;
+    unsigned int align : 2;
+    unsigned int bold : 1;
+    unsigned int italic : 1;
+};
+void show_message(struct message* ps) {
+    printf("%5s %5s %10s %5s %5s\n", "ID", "SIZE", "ALIGNMENT", "B", "I");
+    char align[10];
+    switch (ps->align) {
+    case 0:strcpy_s(align, 10,"left"); break;
+    case 1:strcpy_s(align, 10, "middle"); break;
+    case 2:strcpy_s(align, 10, "right"); break;
+    }
+    printf("%5d %5d %10s %5s %5s\n",
+        ps->font, ps->size, align, ps->bold == 0 ? "off" : "on", ps->italic == 0 ? "off" : "on");
+    return;
+}
+void show_choices(void) {
+    printf("a)change font\tb)change size\n"
+        "c)change alignment\td)toggle bold\n"
+        "e)toggle italic\tq)quit\n");
+    return;
+}
+void p15_6(void) {
+    struct message text1 = {1,12,0,0,0 };//初始化
+    struct message * ps = &text1;
+    show_message(ps);
+    putchar('\n');
+    show_choices();
+    char ch = 0;
+    while (1 == scanf_s("%c", &ch,1) && ch != 'q') {
+        while (getchar() != '\n')
+            continue;
+        
+        switch (ch) {
+        case 'a': {
+            printf("Enter font(0~255):");
+            int font = 0;
+            if (scanf_s("%d", &font) == 1) 
+                ps->font = font;
+            else
+                printf("modified error!\n");
+            while (getchar() != '\n')
+                continue;
+            
+            break;
+        }
+        case 'b': {
+            printf("Enter font size(0~127):");
+            int size = 0;
+            
+            if (scanf_s("%d", &size) == 1)
+                ps->size = size;
+            else
+                printf("modified error!\n");
+            while (getchar() != '\n')
+                continue;
+            break;
+        }
+        case 'c': {
+            printf("Enter alignment(0~2):");
+            int align = 0;
+            
+            if (scanf_s("%d", &align) == 1)
+                ps->align = align;
+            else
+                printf("modified error!\n");
+            while (getchar() != '\n')
+                continue;
+            break;
+        }
+        case 'd': {
+            printf("Enter bold?(0~1):");
+            int bold = 0;
+            
+            if (scanf_s("%d", &bold) == 1)
+                ps->bold = bold;
+            else
+                printf("modified error!\n");
+            while (getchar() != '\n')
+                continue;
+            break;
+        }
+        case 'e': {
+            printf("Enter italic?(0~255):");
+            int italic = 0;
+            
+            if (scanf_s("%d", &italic) == 1)
+                ps->italic = italic;
+            else
+                printf("modified error!\n");
+            while (getchar() != '\n')
+                continue;
+            break;
+        }
+        default:printf("wrong choice!\n"); exit(-1);
+        }
+        show_message(ps);
+        show_choices();
+    }
+    return;
+
+}
+
+/*-------------p15_5-------------*/
+unsigned int rotate(unsigned int dig, int n) {
+    if (dig == 0)
+        return 0;
+    //确认共几位二进制
+    int count = 1;
+    unsigned int copy1 = dig;
+    unsigned int copy2 = dig;
+    while (copy1 != 1) {
+        count++;
+        copy1 >>= 1;
+    }
+    int* np;
+    np = (int*)malloc(sizeof(int) * count);
+    for (int i = 0; i < count; i++,copy2>>=1) {
+        //取位
+        np[i] = copy2 & 01;
+        printf("the binary :%d\n", np[i]);
+    }
+    //左移
+    dig <<= n;
+    printf("the dig is %d: %s\n", dig,i2b(dig));
+
+    //替换出去的高位
+    for (int i = 0; i <n; i++) {
+        int mask = np[count-1-i] << (n-1 - i);
+        dig |= mask;
+        printf("the replaced num is %d\n", np[count-1-i]);
+    }
+    printf("the dig is %d: %s\n", dig, i2b(dig));
+    free(np);
+    return dig;
+}
+void p15_5(void) {
+    int dig = 0b100110111;
+    int n = 5;
+    int result;
+    result = rotate(dig, n);
+    printf("the digit %19d: %s\n",
+        dig, i2b(dig));
+    printf("after convert is %12d: %s\n",
+        result, i2b(result));
+    return;
+}
+
 /*-------------p15_2-------------*/
 void show_bitoperate(void) {
     printf("You van choose the operations following(q to quit):\n");

@@ -6,6 +6,16 @@
 #include<ctype.h>
 #include<time.h>
 
+/*-------------p15_6-------------*/
+void show_message(struct message* ps);
+void show_choices(void);
+void p15_6(void);
+
+/*-------------p15_5-------------*/
+unsigned int rotate(unsigned int dig, int n);
+void p15_5(void);
+
+/*-------------p15_2-------------*/
 void bitoperate(char* ch,char* new,char choice);
 void show_bitoperate(void);
 void p15_2(void);
