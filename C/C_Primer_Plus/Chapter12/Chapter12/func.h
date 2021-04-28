@@ -1,10 +1,41 @@
-//#pragma once
+#pragma once
 #include <stdio.h>
 #include<string.h>
 #include<stdlib.h>
 #include<math.h>
 #include<ctype.h>
 #include<time.h>
+#include<stdarg.h>
+
+/*-------------p16_7-------------*/
+void show_d_array(const double ar[], int n);
+double* new_d_array(int n, ...);
+void p16_7(void);
+
+/*-------------p16_5-------------*/
+void rand_draw(int* source, int num, int n);
+void p16_5(void);
+
+/*-------------p16_4-------------*/
+void delay(double n);
+void p16_4(void);
+
+/*-------------p16_3-------------*/
+#define DEG2RAD(x)((x)*atan(1)/45)
+typedef struct polar {
+	float r;
+	float t;
+}POLAR;
+typedef struct cartisian {
+	float  x;
+	float y;
+}CARTISIAN;
+CARTISIAN p2c_convert(struct polar* polar);
+void p16_3(void);
+
+/*-------------p16_2-------------*/
+#define HARMEAN(x,y)( 1/( 1/(x) + 1/(y) )*2 )
+void p16_2(void);
 
 /*-------------p15_6-------------*/
 void show_message(struct message* ps);

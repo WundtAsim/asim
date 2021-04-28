@@ -1,6 +1,98 @@
 #include <stdio.h>
 #include "func.h"
 
+
+/*-------------p16_7-------------*/
+void show_d_array(const double ar[], int n) {
+    for (int i = 0; i < n; i++) 
+        printf("%lf ", ar[i]);
+    
+    putchar('\n');
+}
+double* new_d_array(int n, ...) {    
+    va_list ap;//声明一个存储参数的对象
+    va_start(ap, n);//将ap初始化为参数列表
+    double* pt;
+    pt = (double*)malloc(n * sizeof(double));    
+    for (int i = 0; i < n; i++)
+        pt[i] = va_arg(ap, double);
+    va_end(ap);
+    return pt;
+
+}
+void p16_7(void) {
+    double* p1;
+    double* p2;
+    p1 = new_d_array(5, 1.2, 2.3, 3.4, 4.5, 5.6);
+    p2 = new_d_array(4, 100.0, 20.00, 8.08, -1890.0);
+    show_d_array(p1, 5);
+    show_d_array(p2, 4);
+    free(p1);
+    free(p2);
+    return;
+}
+/*-------------p16_5-------------*/
+void rand_draw(int* source, int num, int n) {
+    int index = 0;
+    int temp = 0;
+    srand((unsigned int)time(0));
+    for (int i = 0; i < n; i++) {
+        index = rand() % num;
+        temp = source[index];
+        printf("No%3d. 30142022%d. Congratulations!\n", i + 1, temp);
+        source[index] = source[num - 1];//swap
+        source[num - 1] = temp;
+        num -= 1;
+    }
+    return;
+}
+void p16_5(void) {
+    int source[50];
+    for (int i = 0; i < 30; i++)
+        source[i] = i+24;
+    rand_draw(source, 30, 10);
+    return;
+}
+
+/*-------------p16_4-------------*/
+void delay(double n) {
+    clock_t begin = clock();
+    clock_t end = clock();
+    while (((double)end - (double)begin) / CLOCKS_PER_SEC < n) {
+        end = clock();
+    }
+    return;
+}
+void p16_4(void) {
+    for (int i = 0,a = 'a'; i < 26; i++,a++) {
+        printf("%c ", a);
+        delay(0.5);
+    }
+    printf("Done!\n");
+}
+
+/*-------------p16_3-------------*/
+CARTISIAN p2c_convert(struct polar* polar) {
+    CARTISIAN(cartisian);
+    cartisian.x = polar->r * cos(DEG2RAD(polar->t));
+    cartisian.y = polar->r * sin(DEG2RAD(polar->t));
+    return cartisian;
+}
+void p16_3(void) {
+    POLAR(polar) = { sqrt(128),45 };    
+    CARTISIAN result = p2c_convert(&polar);
+    printf("r = %.1f, theat = %.1f°\n"
+        "x = %.1f, y = %.1f", polar.r, polar.t, result.x, result.y);
+    return;
+}
+
+/*-------------p16_2-------------*/
+void p16_2(void) {
+    float x = 2, y = 2;
+    printf("Digit %.1f and digit %.1f 's harmonic mean is %.1f\n", x, y, HARMEAN(x, y));
+    return;
+}
+
 /*-------------p15_6-------------*/
 struct message {
     //位字段
