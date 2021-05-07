@@ -6,6 +6,59 @@
 #include<ctype.h>
 #include<time.h>
 #include<stdarg.h>
+#include<stdbool.h>
+
+/*-------------p17_7-------------*/
+#define SLEN 81
+#define MAXITEAMS 100
+typedef struct item_word{
+	char word[SLEN];
+	int count;
+}Item_word;
+
+typedef struct node {
+	Item_word item_word;
+	struct node* left;
+	struct node* right;
+}Node;
+typedef struct tree {
+	Node* root;
+	int size;
+}Tree;
+void init_tree(Tree* ptree);//初始化树
+bool tree_empty(const Tree* ptree);//树空
+bool tree_full(const Tree* ptree);//树满
+int tree_count(const Tree* ptree);//树中item个数
+bool add_item2tree(const Item_word* pi, Tree* ptree);//在树中加入item
+bool in_tree(const Item_word* pi , Tree* ptree);//item是否在树中
+bool del_item(const Item_word* pim , Tree* ptree);//从树中删除item
+bool traverse(const Tree* ptree, void(*pfun)(Item_word item));//将func应用到树中每一个item
+void del_all(Tree* ptree);//从树中删除所有
+const Item_word* whereintree(const Item_word* pi, const Tree* ptree);//返回树中某个item地址
+
+void p17_7(void);
+
+/*-------------p17_6-------------*/
+bool in_array(int* sarray, int n, int obj);
+void p17_6(void);
+
+/*-------------p17_5-------------*/
+#define MAXSIZE 100//栈大小
+
+typedef char item;//item栈的数据类型
+
+typedef struct {
+	item data[MAXSIZE];
+	int top;//第一个空位的索引值
+}stack;
+
+char* s_get(char* st, int n);//从std获取字符串输入
+void init_stack(stack* ps);//初始化栈-ps指向一个栈
+bool full_stack(const stack* ps);//判断栈是否已满
+bool empty_stack(const stack* ps);//判断栈是否为空
+bool push(item val, stack* ps);//压入栈
+bool pop(item* val, stack* ps);//弹出栈
+void p17_5(void);
 
 /*-------------p16_7-------------*/
 void show_d_array(const double ar[], int n);

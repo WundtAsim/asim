@@ -1,6 +1,506 @@
 #include <stdio.h>
 #include "func.h"
+/*-------------p17_7-------------*/
 
+//************内部函数原型等
+typedef struct {
+    Node* parent;
+    Node* child;
+}Pair;
+static Node* MakeNode(const Item_word* pi);//
+static bool ToLeft(const Item_word* i1, const Item_word* i2);//
+static bool ToRight(const Item_word* i1, const Item_word* i2);//
+static void AddNode(Node* new_node, Node* root);//
+static void InOrder(const Node* root, void (*pfun)(Item_word item));//
+static Pair SeekItem(const Item_word* pi, const Tree* ptree);//
+static void DeleteNode(Node** ptr);//
+static void DeleteAllNodes(Node* ptr);//
+
+//做叶节点
+static Node* MakeNode(const Item_word* pi)
+{
+    Node* new_node;
+
+    new_node = (Node*)malloc(sizeof(Node));
+    if (new_node != NULL)
+    {
+        new_node->item_word = *pi;
+        new_node->item_word.count = 1;
+        new_node->left = NULL;
+        new_node->right = NULL;
+    }
+    return new_node;
+}
+static bool ToLeft(const Item_word* i1, const Item_word* i2)//应该放左树
+{
+    return strcmp(i1->word, i2->word) < 0 ? true : false;
+}
+
+static bool ToRight(const Item_word* i1, const Item_word* i2)//应该放右树
+{
+    return strcmp(i1->word, i2->word) > 0 ? true : false;
+}
+//将节点加到树上
+static void AddNode(Node* new_node, Node* root)//
+{
+    if (ToLeft(&new_node->item_word, &root->item_word))
+    {
+        if (root->left == NULL)
+        {
+            root->left = new_node;
+        }
+        else
+        {
+            AddNode(new_node, root->left);
+        }
+    }
+    else if (ToRight(&new_node->item_word, &root->item_word))
+    {
+        if (root->right == NULL)
+        {
+            root->right = new_node;
+        }
+        else
+        {
+            AddNode(new_node, root->right);
+        }
+    }
+    else
+    {
+        fprintf(stderr, "Can't add repetitive item!\n");
+        exit(EXIT_FAILURE);
+    }
+    return;
+}
+//按顺序应用func
+static void InOrder(const Node* root, void (*pfun)(Item_word item))//
+{
+    if (root != NULL)
+    {
+        InOrder(root->left, pfun);
+        (*pfun)(root->item_word);
+        InOrder(root->right, pfun);
+    }
+    return;
+}
+//找到item的父与子
+static Pair SeekItem(const Item_word* pi, const Tree* ptree)
+{
+    Pair look;
+    look.parent = NULL;
+    look.child = ptree->root;
+
+    if (look.child == NULL)
+    {
+        return look;
+    }
+    while (look.child != NULL)
+    {
+        if (ToLeft(pi, &(look.child->item_word)))
+        {
+            look.parent = look.child;
+            look.child = look.child->left;
+        }
+        else if (ToRight(pi, &(look.child->item_word)))
+        {
+            look.parent = look.child;
+            look.child = look.child->right;
+        }
+        else
+        {
+            break;
+        }
+    }
+    return look;
+}
+//删除node
+static void DeleteNode(Node** ptr)
+{
+    Node* temp;
+
+    if ((*ptr)->left == NULL)
+    {
+        temp = *ptr;
+        *ptr = (*ptr)->right;
+        free(temp);
+    }
+    else if ((*ptr)->right == NULL)
+    {
+        temp = *ptr;
+        *ptr = (*ptr)->left;
+        free(temp);
+    }
+    else
+    {
+        for (temp = (*ptr)->left; temp->right != NULL; temp = temp->right)
+        {
+            continue;
+        }
+        temp->right = (*ptr)->right;
+        temp = *ptr;
+        *ptr = (*ptr)->left;
+        free(temp);
+    }
+    return;
+}
+//
+static void DeleteAllNodes(Node* root)
+{
+    Node* pright;
+
+    if (root != NULL)
+    {
+        pright = root->right;
+        DeleteAllNodes(root->left);
+        free(root);
+        DeleteAllNodes(pright);
+    }
+    return;
+}
+
+
+
+
+
+
+
+//***************接口函数原型
+void eatline(void)
+{
+    while (getchar() != '\n')
+        continue;
+    return;
+}
+void init_tree(Tree* ptree) {
+    ptree->root = NULL;
+    ptree->size = 0;
+    return;
+}
+bool tree_empty(const Tree* ptree) {
+    return NULL == ptree->root;
+}
+bool tree_full(const Tree* ptree) {
+    return MAXITEAMS == ptree->size;
+}
+int tree_count(const Tree* ptree) {
+    return ptree->size;
+}
+bool add_item2tree(const Item_word* pi, Tree* ptree) {
+    Node* new_node;
+    Pair seek;
+
+    if (tree_full(ptree)) {
+        fprintf(stderr, "No memory available.\n");
+        return false;
+    }
+    if ((seek = SeekItem(pi, ptree)).child != NULL) {
+        seek.child->item_word.count++;
+        return true;
+    }
+    new_node = MakeNode(pi);//New points to new node
+    if (new_node == NULL)
+    {
+        fprintf(stderr, "Memory allocation failed!\n");
+        exit(EXIT_FAILURE);
+    }
+    ptree->size++;
+    if (ptree->root == NULL)
+    {
+        ptree->root = new_node;
+    }
+    else
+    {
+        AddNode(new_node, ptree->root);
+    }
+    return true;          
+}
+bool in_tree(const Item_word* pi, Tree* ptree) {
+    return (SeekItem(pi, ptree).child == NULL) ? false : true;
+}
+bool del_item(const Item_word* pi, Tree* ptree) {
+    Pair look;
+    look = SeekItem(pi, ptree);
+
+    if (look.child == NULL)
+    {
+        return false;
+    }
+    if (look.child->item_word.count > 0)
+    {
+        look.child->item_word.count--;
+    }
+    else
+    {
+        if (look.parent == NULL)
+        {
+            DeleteNode(&ptree->root);
+        }
+        else if (look.parent->left == look.child)
+        {
+            DeleteNode(&look.parent->left);
+        }
+        else
+        {
+            DeleteNode(&look.parent->right);
+        }
+        ptree->size--;
+    }
+    return true;
+}
+bool traverse(const Tree* ptree, void(*pfun)(Item_word item)) {
+    if (ptree != NULL)
+    {
+        InOrder(ptree->root, pfun);
+    }
+    return;
+}
+void del_all(Tree* ptree) {
+    if (ptree != NULL)
+    {
+        DeleteAllNodes(ptree->root);
+    }
+    ptree->root = NULL;
+    ptree->size = 0;
+    return;
+}
+const Item_word* whereintree(const Item_word* pi, const Tree* ptree) {
+    Node* pn;
+
+    pn = SeekItem(pi, ptree).child;
+    return NULL == pn ? NULL : &(pn->item_word);
+}
+
+//**************函数-main显示用
+int menu(void)
+{
+    int ch;
+
+    puts("==============================================");
+    puts("           Word counting program");
+    puts("Enter the letter corresponding to your choice:");
+    puts("     s) show word list      f) find a word");
+    puts("     q) quit");
+    puts("==============================================");
+    printf("Please you choose: ");
+    while (ch = get_first(), NULL == strchr("sfq", ch))
+    {
+        printf("Please enter s, f or q: ");
+    }
+    return ch;
+}
+
+
+
+void findword(const Tree* pt)
+{
+    char word[SLEN];
+    Item_word entry;
+    const Item_word* pi;
+
+    if (tree_empty(pt))
+    {
+        puts("No words in this text.");
+        return;
+    }
+    printf("Please enter a word: ");
+    s_get(word, 80);
+    strcpy_s(entry.word,SLEN, word);      //把word数组中的单词复制到二叉树的项目中;
+    pi = whereintree(&entry, pt); //寻找单词在二叉树中的位置;
+    if (NULL == pi)
+    {
+        printf("Word %s doesn't exist in this text.\n", word);
+    }
+    else
+    {
+        printf("Word %s appeared %d times in this text.\n", word, pi->count);
+    }
+    return;
+}
+
+void print_all_items(Item_word item)
+{
+    printf("Word %s appeared %d times totally in this text.\n", item.word, item.count);
+    return;
+}
+void showwords(const Tree* pt)
+{
+    if (tree_empty(pt)) //使用二叉树存储的单词若为空则表示无单词;
+    {
+        puts("No words in this text.");
+    }
+    else
+    {
+        traverse(pt, print_all_items);
+    }
+    return;
+}
+int get_first(void)
+{
+    int ch;
+
+    do
+    {
+        ch = tolower(getchar());
+    } while (isspace(ch));
+    eatline();
+    return ch;
+}
+
+
+//*************main函数！！！！！！！！！！！
+void p17_7(void) {
+    Tree wordcount;
+    FILE* fp;
+    char filename[SLEN];
+    char word[SLEN];
+    Item_word entry;
+    char choice;
+
+    printf("Please enter a filename: ");
+    s_get(filename, SLEN);
+
+    fopen_s(&fp, filename, "r");
+    if (fp == NULL)
+    {
+        fprintf(stderr, "Can't open file %s\n", filename);
+        exit(EXIT_FAILURE);
+    }
+    init_tree(&wordcount); //初始化一个二叉树;
+    while (1 == fscanf_s(fp, "%80s", word, 80) && !tree_full(&wordcount))
+    {
+        strcpy_s(entry.word,SLEN, word);
+        add_item2tree(&entry, &wordcount);
+    }
+    while ((choice = menu()) != 'q')
+    {
+        switch (choice)
+        {
+        case 's':
+        {
+            showwords(&wordcount);
+            break;
+        }
+        case 'f':
+        {
+            findword(&wordcount);
+            break;
+        }
+        }
+        printf("\n\n\n\n\n\n\n\n\n\n");
+    }
+    del_all(&wordcount);
+    if (fclose(fp) != 0)
+    {
+        fprintf(stderr, "Can't close file %s\n", filename);
+    }
+    puts("Done.");
+
+    return;
+
+}
+/*-------------p17_6-------------*/
+bool in_array(int* sarray, int n, int obj) {
+    bool found = false;
+    int head = 0;
+    int end = n - 1;
+    int mid = 0;
+    
+    while (head < end) {
+        mid = (head + end) / 2;
+        if (obj < sarray[mid])
+            end = mid - 1;
+        else if (obj > sarray[mid])
+            head = mid + 1;
+        else {
+            found = true;;
+            break;
+        }
+    }
+    if (sarray[head] == obj || sarray[end] == obj)
+        return true;
+    return found;
+}
+void p17_6(void) {
+    int sarray[10] = { 0,1,2,3,4,5,6,7,8,9 };
+    int obj = 0;
+    printf("Enter a digit :(q to quit)\n");
+    while (1 == scanf_s("%d", &obj)) {
+        if (in_array(sarray, 10, obj))
+            printf("Digit %d is in the array.\n",obj);
+        else
+            printf("it\'s not there.\n");
+        puts("You can enter another digit:\n");
+    }
+}
+
+/*-------------p17_5-------------*/
+
+char* s_get(char* st, int n) {
+    char* val;
+    char* find;
+    val = fgets(st, n, stdin);//成功返回第一个参数
+    if (val) {
+        find = strchr(st, '\n');
+        if (find)
+            *find = '\0';
+        else
+            while (getchar() != '\n')
+                continue;
+    }
+    return val;
+}
+void init_stack(stack* ps) {
+    ps->top = 0;
+    return;
+}
+
+bool full_stack(const stack* ps) {
+    return MAXSIZE == ps->top;
+}
+bool empty_stack(const stack* ps) {
+    return 0 == ps->top;
+}
+bool push(item val, stack* ps) {
+    if (full_stack(ps))
+        return false;
+    else {
+        ps->data[ps->top] = val;
+        ps->top++;
+        return true;
+    }
+}
+
+bool pop(item* val, stack* ps) {
+    if (empty_stack(ps))
+        return false;
+    else {
+        ps->top--;
+        *val = ps->data[ps->top];        
+        return true;
+    }
+}
+
+void p17_5(void) {
+    stack st;
+    item ch;//接收弹出
+    item temp[MAXSIZE];    
+
+    init_stack(&st);
+    printf("please enter a string (q to quit):\n");
+    while (s_get(temp, MAXSIZE) != NULL && strcmp(temp,"q")!=0 ) {
+        int index = 0;
+        while (temp[index] != '\0')
+            push(temp[index++] ,&st);
+        printf("Reversing order :\n");
+        while (!empty_stack(&st)) {
+            pop(&ch, &st);//顺序出栈
+            putchar(ch);
+        }
+        puts("\nYou can enter a string again(q to quit)");
+    }
+    puts("Quit!");
+    return;
+}
 
 /*-------------p16_7-------------*/
 void show_d_array(const double ar[], int n) {
