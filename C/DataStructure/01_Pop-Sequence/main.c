@@ -21,42 +21,68 @@ int main(){
     int M, N, K;
     scanf("%d%d%d",&M,&N,&K);
 
-    Stack list = init_stack();
     for (int i = 0;i<K;i++){
+        while(getchar()!='\n')//如果跳出，清理剩余输入
+            continue;
+        Stack list = init_stack();
         int* temp;
+        int current;
+        bool Noway = false;//用于表示栈满，直接失败的情况
         temp = (int*)malloc(N * sizeof(int));
         for(int j = 0;j<N;j++){
             scanf("%d",temp+j);
-            int top = gettop(list);
-            //如空栈，则先push到
-            if(top == -1){
-                for(int add = 1; add<=*(temp+j); add++){
-                    push_stack(list, add, M);
+            //第一个数，则先将栈内push到第一个数
+            if(j==0){
+                for(current = 1; current<=*(temp+j); current++){
+                    //如果栈满，直接退出循环
+                    if(! push_stack(list, current, M)){
+                        Noway = true;goto here;
+                    }
                 }
+                int out;
+                pop_stack(list,&out);
             }
-            //更新top
-            top = gettop(list);
-            //如top=第一个出栈的数
-            else if(top == *(temp+j)){
-                pop_stack(list);
-                break;
-            }
-            //如top<第一个出栈的数
-            else if(){
+            else{
+                    //更新top
+                int top = gettop(list);
+                //如top=第一个出栈的数，则出栈
+                if(top == *(temp+j)){
+                    int out;
+                    pop_stack(list,&out);
+                }
+                //如检测的数>top，且其>current，则入栈到current
+                else if(*(temp+j) > top && *(temp+j)>=current){
+                    while(current <= *(temp+j)){
+                        //如果栈满，直接退出循环
+                        if(! push_stack(list, current, M)){
+                            Noway = true;break;
+                        }
+                        current++;
+                    }//while
+                    int out;
+                    pop_stack(list,&out);
+                }//elseif
+                else{
+                        Noway = true;break;
+                    }
+            }//else
+        }//for 一行数判断完
+        here:if(!isempty(list) || Noway)
+            printf("NO");
+        else
+            printf("YES");
+        if(i!=K-1)
+            putchar('\n');
 
-            }
-        }
-
-
-
-
-        push_stack(list,temp,10);
+    free(temp);
+    destory_stack(list);
     }
 
-    destory_stack(list);
     return 0;
 }
-
+/*************************************************************
+*****************----------functions---------*****************
+*************************************************************/
 //初始化栈
 Stack init_stack()
 {
