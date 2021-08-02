@@ -12,34 +12,34 @@ typedef struct Node {
 
 //函数声明
 int build_tree(Tree p);
-bool ishomo(int head1, Tree t1, int head2, Tree t2);
+bool isomorphic(int head1, Tree t1, int head2, Tree t2);
 void PreOrder(int head, Tree t);
 void LevelOrder(int head, Tree t);
 void visit(Node* p);
 void eatline();
 typedef struct Qnode {
-    elemtype data;
+    Node* current;
     struct Qnode* next;
 } Qnode;
 typedef struct Queue {
-    Qnode *front, rear;
+    Qnode *front, *rear;
 } Queue;
 Queue* Init_queue();
 bool Isempty(Queue* q);
-void EnQueue(Queue* q, elemtype x);
-void DeQueue(Queue* q, elemtype* x);
+void EnQueue(Queue* q, Node* x);
+bool DeQueue(Queue* q, Qnode* x);
 
 int main() {
     Node T1[Maxtree], T2[Maxtree];
     int head1, head2;
     head1 = build_tree(T1);
-    /*head2 = build_tree(T2);
-    if (ishomo(head1, T1, head2, T2))
+    head2 = build_tree(T2);
+    if (isomorphic(head1, T1, head2, T2))
         printf("Yes\n");
     else
-        printf("No\n");*/
+        printf("No\n");
     // PreOrder(head1, T1);
-    LevelOrder(head1, T1);
+    // LevelOrder(head1, T1);
     return 0;
 }
 
@@ -66,7 +66,7 @@ int build_tree(Tree p) {
         } else
             p[i].rchild = NON;
     }
-    int Root;  //根位置
+    int Root = -1;  //根位置
     for (int i = 0; i < N; i++) {
         if (check[i] == 0) {
             Root = i;
@@ -77,6 +77,7 @@ int build_tree(Tree p) {
 }
 
 void PreOrder(int head, Tree t) {
+    printf("PreOrder:\n");
     Node* p = t + head;
     if (head != NON) {
         visit(p);
@@ -93,20 +94,25 @@ void eatline() {
 }
 
 void LevelOrder(int head, Tree t) {
+    printf("LevelOrder:\n");
     Queue* q = Init_queue();
-    elemtype x;
+    EnQueue(q, t + head);                      //根入队
+    Qnode* x = (Qnode*)malloc(sizeof(Qnode));  //接收出队元素
     while (!Isempty(q)) {
-        DeQueue(q, &x);
-        printf("%c->", x);
-        if (t[head].lchild != NON)
-            EnQueue(q, t[head].lchild->data);
-        if (t[head].rchild != NON)
-            EnQueue(q, t[head].rchild->data);
+        DeQueue(q, x);
+        printf("%c->", x->current->data);
+        if (x->current->lchild != NON)
+            EnQueue(q, t + x->current->lchild);
+        if (x->current->rchild != NON)
+            EnQueue(q, t + x->current->rchild);
     }
+    //↓此处之前写成在while里free（x），后果是x指向的内存被交还，下次出队时x处即脏数据
+    free(x);
 }
 Queue* Init_queue() {
     Queue* p = (Queue*)malloc(sizeof(Queue));
-    p->front = p->rear = (Qnode*)malloc(sizeof(Qnode));
+    p->front = (Qnode*)malloc(sizeof(Qnode));
+    p->rear = p->front;
     p->front->next = NULL;
     return p;
 }
@@ -116,25 +122,47 @@ bool Isempty(Queue* q) {
     else
         return false;
 }
-void EnQueue(Queue* q, elemtype x) {
+void EnQueue(Queue* q, Node* x) {
     Qnode* s = (Qnode*)malloc(sizeof(Qnode));
-    s->data = x;
+    s->current = x;
     s->next = NULL;
     q->rear->next = s;
     q->rear = s;
 }
-void DeQueue(Queue* q, elemtype* x) {
+bool DeQueue(Queue* q, Qnode* x) {
     if (Isempty(q))
         return false;
-    Qnode* new = q->front->next;
-    *x = new->data;
-    q->front->next = new->next;
-    if (new == q->rear)  //若原队列只有一个，删除后变空
+    Qnode* temp = q->front->next;
+    x->current = temp->current;
+    x->next = temp->next;
+    q->front->next = temp->next;
+    if (temp == q->rear)  //若原队列只有一个，删除后变空
         q->rear = q->front;
-    free(new);
+    free(temp);
     return true;
 }
+/*1、malloc与free配套使用。(有申请有释放，有创建有销毁)
+2、指向malloc申请的堆内存的指针，在运用过程中千万不要另外赋值，否则同样导致内存泄露
+3、malloc后，实际使用时指针长度超过了你申请的范围。再去free时肯定出问题。
+4、改变指针的初始指向地址*/
 
-bool ishomo(int head1, Tree t1, int head2, Tree t2) {
-    ;
+bool isomorphic(int head1, Tree t1, int head2, Tree t2) {
+    if (head1 == NON && head2 == NON)  //两树皆空，同
+        return 1;
+    if (head1 == NON && head2 != NON ||
+        head1 != NON && head2 == NON)  //一树空一树非空，不同
+        return 0;
+    Node *h1 = t1 + head1, *h2 = t2 + head2;
+    if (h1->data != h2->data)  //根不同，不同
+        return 0;
+    if (h1->lchild == NON && h2->lchild == NON)  //两树的根左孩都非空，判断右孩
+        return isomorphic(h1->rchild, t1, h2->rchild, t2);
+    //左孩存在且相等，往下；
+    if ((h1->lchild != NON && h2->lchild != NON) &&
+        ((t1 + h1->lchild)->data == (t2 + h2->lchild)->data))
+        return isomorphic(h1->lchild, t1, h2->lchild, t2) &&
+               isomorphic(h1->rchild, t1, h2->rchild, t2);
+    else  //左孩可能与右孩对调
+        return isomorphic(h1->lchild, t1, h2->rchild, t2) &&
+               isomorphic(h1->rchild, t1, h2->lchild, t2);
 }
