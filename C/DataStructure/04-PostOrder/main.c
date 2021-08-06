@@ -21,14 +21,19 @@ void push(Stack S, int x);
 bool pop(Stack S, int* x);
 bool isempty(Stack S);
 void buildTree(int N);
-void PostTree(int N);
+void PostTree(int pre_r, int in_r, int post_r, int N);
 
 //主函数
 int main() {
     int N;
     scanf("%d", &N);
     buildTree(N);
-    PostTree(N);
+    PostTree(0, 0, 0, N);
+    for (int i = 0; i < N; i++) {
+        printf("%d", post[i]);
+        if (i < N - 1)
+            putchar(' ');
+    }
     return 0;
 }
 
@@ -80,11 +85,19 @@ void buildTree(int N) {
     }
     return;
 }
-void PostTree(int N) {
+void PostTree(int pre_r, int in_r, int post_r, int N) {
     if (N == 0)
         return;
     if (N == 1)
-        post[0] = in[0];
-    else {
+        post[post_r] = pre[pre_r];
+    int i;
+    int root = pre[pre_r];
+    post[post_r + N - 1] = root;
+    for (i = 0; i < N; i++) {
+        if (in[in_r + i] == root)
+            break;
     }
+    int L = i, R = N - i - 1;
+    PostTree(pre_r + 1, in_r, post_r, L);
+    PostTree(pre_r + 1 + L, in_r + L + 1, post_r + L, R);
 }
